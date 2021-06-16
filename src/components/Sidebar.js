@@ -1,5 +1,5 @@
 
-import React from 'react'
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import CreateIcon from "@material-ui/icons/Create";
@@ -12,8 +12,29 @@ import AppsIcon from "@material-ui/icons/Apps";
 import FileCopyIcon from "@material-ui/icons/FileCopy";
 import ExpandLessIcon from "@material-ui/icons/ExpandLess";
 import SidebarOption from './SidebarOption';
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import AddIcon from "@material-ui/icons/Add";
+import { db } from "../firebase";
+
 
 function Sidebar() {
+    const [channels, setchannels] = useState([]);
+    function getchannels() {
+        db.collection("rooms").get()
+            .then(snapshot => {
+                const items = [];
+                snapshot.forEach(doc => {
+                    items.push(doc.data());
+                })
+                setchannels(items);
+            })
+            .catch(error => console.log(error))
+    }
+
+    useEffect(() => {
+        getchannels();
+    }, []);
+
     return (
         <SidebarContainer>
             <SidebarHeader>
@@ -35,11 +56,21 @@ function Sidebar() {
             <SidebarOption Icon={AppsIcon} title="Apps" />
             <SidebarOption Icon={FileCopyIcon} title="File browser" />
             <SidebarOption Icon={ExpandLessIcon} title="Show less" />
+            <hr />
+            <SidebarOption Icon={ExpandMoreIcon} title="Channels" />
+            <hr />
+            <SidebarOption Icon={AddIcon} addChannelOption title="Add Channels" />
 
+            {channels.map(singleChannel => (
+                <SidebarOption
+                    title={singleChannel.name}
+                />
+            ))}
 
         </SidebarContainer>
     )
 }
+
 
 export default Sidebar
 
@@ -50,6 +81,12 @@ const SidebarContainer = styled.div`
     border-top: 1px solid #49274b;
     max-width: 260px;
     margin-top: 60px;
+
+    >hr{
+        margin-top: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #49274b;
+    }
 `
 
 const SidebarHeader = styled.div`
