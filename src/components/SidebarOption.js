@@ -7,6 +7,7 @@ import { db } from "../firebase";
 
 function SidebarOption({ Icon, title, addChannelOption, id }) {
     const dispatch = useDispatch();
+    const { uuid } = require('uuidv4');
 
     function refreshPage() {
         window.location.reload(false);
@@ -16,7 +17,8 @@ function SidebarOption({ Icon, title, addChannelOption, id }) {
         const channelName = prompt('Please enter the channel name');
         if (channelName) {
             db.collection('rooms').add({
-                name: channelName
+                name: channelName,
+                id: uuid()
             }).then(() => {
                 refreshPage();
             })
