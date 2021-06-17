@@ -8,6 +8,10 @@ import firebase from "firebase";
 function ChatInput({ channelName, channelId }) {
     const [input, setInput] = useState('');
 
+    function refreshPage() {
+        window.location.reload(false);
+    }
+
     const sendMessage = e => {
         e.preventDefault();
         console.log(channelId);
@@ -15,19 +19,18 @@ function ChatInput({ channelName, channelId }) {
         if (!channelId) {
             return false;
         }
-
         db
-            .collection('rooms')
-            .doc(channelId)
             .collection('messages')
             .add({
                 message: input,
                 timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                 user: "tianhao",
-                image: "https://picsum.photos/200/300"
+                image: "https://picsum.photos/200/300",
+                channelId: channelId
+            }).then(() => {
+                setInput('');
+                refreshPage();
             })
-
-        setInput('');
 
     };
 
@@ -37,7 +40,7 @@ function ChatInput({ channelName, channelId }) {
                 <input
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    placeholder={channelName}
+                    placeholder={'Message # ' + channelName}
                 />
                 <Button hidden type='submit' onClick={sendMessage}>
                     SEND

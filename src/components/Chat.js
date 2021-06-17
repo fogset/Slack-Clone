@@ -21,6 +21,7 @@ import { db } from "../firebase";
 function Chat() {
     const roomId = useSelector(selectRoomId);
     const [roomDetails, setroomDetails] = useState([]);
+    const [roomMessages, setroomMessages] = useState([]);
 
     function getRoomInfo() {
         db.collection("rooms").get()
@@ -33,10 +34,24 @@ function Chat() {
             })
             .catch(error => console.log(error))
     }
+    function getMessageInfo() {
+        db.collection("messages")
+            .orderBy("timestamp", "asc")
+            .get()
+            .then(snapshot => {
+                const items = [];
+                snapshot.forEach(doc => {
+                    items.push(doc.data());
+                })
+                setroomMessages(items);
+            })
+            .catch(error => console.log(error))
+    }
 
 
     useEffect(() => {
         getRoomInfo();
+        getMessageInfo()
     }, []);
 
     return (
@@ -66,6 +81,11 @@ function Chat() {
                         channelName={singleChannel.name}
                         channelId={roomId}
                     />
+                ))
+                }
+
+                {roomMessages.map(singleChannel => (
+                    <h1>{singleChannel.message}</h1>
                 ))
                 }
 
