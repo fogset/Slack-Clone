@@ -5,17 +5,17 @@ import { Button } from '@material-ui/core';
 import { db } from "../firebase";
 import firebase from "firebase";
 
-
 function ChatInput({ channelName, channelId }) {
     const [input, setInput] = useState('');
 
     const sendMessage = e => {
         e.preventDefault();
         console.log(channelId);
+
         if (!channelId) {
             return false;
         }
-        console.log("react here");
+
         db
             .collection('rooms')
             .doc(channelId)
@@ -37,7 +37,7 @@ function ChatInput({ channelName, channelId }) {
                 <input
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    placeholder={`Message #$`}
+                    placeholder={channelName}
                 />
                 <Button hidden type='submit' onClick={sendMessage}>
                     SEND

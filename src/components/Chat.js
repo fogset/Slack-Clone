@@ -1,36 +1,53 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components';
 import StarBorderOutlinedIcon from "@material-ui/icons/StarBorderOutlined";
 import InfoOutlinedIcon from "@material-ui/icons/InfoOutlined";
 import { useSelector } from "react-redux";
 import { selectRoomId } from "../features/appSlice"
 import ChatInput from './ChatInput';
-import { useCollection, useDocument } from "react-firebase-hooks/firestore";
 import { db } from "../firebase";
-import firebase from "firebase/app";
+
+// const [roomDetails] = useDocument(
+//     roomId && db.collection('rooms').doc(roomId)
+// )
+// const [roomMessages] = useCollection(
+//     roomId &&
+//     db
+//         .collection('rooms')
+//         .doc(roomId)
+//         .collection('messages')
+// )
 
 function Chat() {
     const roomId = useSelector(selectRoomId);
-    const [roomDetails] = useDocument(
-        roomId && db.collection('rooms').doc(roomId)
-    )
-    const [roomMessages] = useCollection(
-        roomId &&
-        db
-            .collection('rooms')
-            .doc(roomId)
-            .collection('messages')
-    )
-    console.log("show")
-    console.log(roomDetails);
-    console.log(roomMessages);
+    const [roomDetails, setroomDetails] = useState([]);
+
+    function getRoomInfo() {
+        db.collection("rooms").get()
+            .then(snapshot => {
+                const items = [];
+                snapshot.forEach(doc => {
+                    items.push(doc.data());
+                })
+                setroomDetails(items);
+            })
+            .catch(error => console.log(error))
+    }
+
+
+    useEffect(() => {
+        getRoomInfo();
+    }, []);
 
     return (
         <ChatContainer>
             <>
                 <Header>
                     <HeaderLeft>
-                        <h4><strong>#Room name</strong></h4>
+                        {roomDetails.filter(channel => channel.id === roomId).map(singleChannel => (
+                            <h4><strong>#{singleChannel.name}</strong></h4>
+                        ))
+                        }
                         <StarBorderOutlinedIcon />
                     </HeaderLeft>
 
@@ -43,10 +60,14 @@ function Chat() {
                 <ChatMessages>
 
                 </ChatMessages>
-                <ChatInput
-                    // channelName={roomDetails?.data().name}
-                    channelId={roomId}
-                />
+
+                {roomDetails.filter(channel => channel.id === roomId).map(singleChannel => (
+                    <ChatInput
+                        channelName={singleChannel.name}
+                        channelId={roomId}
+                    />
+                ))
+                }
 
             </>
         </ChatContainer>

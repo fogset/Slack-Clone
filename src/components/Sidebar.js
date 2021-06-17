@@ -33,6 +33,7 @@ function Sidebar() {
 
     useEffect(() => {
         getchannels();
+
     }, []);
 
     return (
