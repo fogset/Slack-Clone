@@ -4,6 +4,7 @@ import StarBorderOutlinedIcon from "@material-ui/icons/StarBorderOutlined";
 import InfoOutlinedIcon from "@material-ui/icons/InfoOutlined";
 import { useSelector } from "react-redux";
 import { selectRoomId } from "../features/appSlice"
+import ChatInput from './ChatInput';
 
 function Chat() {
     const roomId = useSelector(selectRoomId);
@@ -23,11 +24,13 @@ function Chat() {
                         </p>
                     </HeaderRight>
                 </Header>
-
                 <ChatMessages>
 
                 </ChatMessages>
-
+                <ChatInput
+                    //ChannelName
+                    channelId={roomId}
+                />
 
             </>
         </ChatContainer>
@@ -55,7 +58,7 @@ const HeaderLeft = styled.div`
 }
 
 >h4 >.MuiSvgIcon-root{
-    margin-left: 10px;
+    margin-left: 20px;
     font-size: 18px;
 }
 `;
@@ -68,8 +71,7 @@ const HeaderRight = styled.div`
 }
 >p>.MuiSvgIcon-root{
     margin-right: 5px !important;
-    font-size:16px;import { useSelector } from 'react-redux';
-
+    font-size:16px;
 }
 `;
 
