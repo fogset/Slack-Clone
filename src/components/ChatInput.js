@@ -1,27 +1,44 @@
 
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import styled from 'styled-components';
 import { Button } from '@material-ui/core';
 import { db } from "../firebase";
+import firebase from "firebase";
 
 
 function ChatInput({ channelName, channelId }) {
-
-    const inputRef = useRef(null);
+    const [input, setInput] = useState('');
 
     const sendMessage = e => {
         e.preventDefault();
-
-        if (channelId) {
+        console.log(channelId);
+        if (!channelId) {
             return false;
         }
+        console.log("react here");
+        db
+            .collection('rooms')
+            .doc(channelId)
+            .collection('messages')
+            .add({
+                message: input,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                user: "tianhao",
+                image: "https://picsum.photos/200/300"
+            })
+
+        setInput('');
 
     };
 
     return (
         <ChatInputContainer>
             <form action="">
-                <input ref={inputRef} placeholder={`Message #ROOM`} />
+                <input
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    placeholder={`Message #$`}
+                />
                 <Button hidden type='submit' onClick={sendMessage}>
                     SEND
                 </Button>
@@ -52,7 +69,7 @@ const ChatInputContainer = styled.div`
   }
 
   > form > button{
-    display: none !important;
+    /* display: none !important; */
   }
 
 `;
