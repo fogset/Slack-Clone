@@ -9,7 +9,6 @@ import { db } from "../firebase";
 import Message from './Message';
 
 
-
 function Chat() {
     const chatRef = useRef(null);
     const roomId = useSelector(selectRoomId);
@@ -50,17 +49,17 @@ function Chat() {
             setfirstTimeLoading(true);
         }
 
-        chatRef?.current?.scrollIntoView({
+        chatRef.current.scrollIntoView({
             behavior: "smooth",
         });
     }, [roomId]);
-    console.log('roomMessages');
-    console.log(roomMessages);
+    // console.log('roomMessages');
+    // console.log(roomMessages);
 
     return (
         <ChatContainer>
             {roomDetails && roomMessages && (
-                <>
+                <div>
                     <Header>
                         <HeaderLeft>
                             {roomDetails.filter(channel => channel.id === roomId).map(singleChannel => (
@@ -100,8 +99,9 @@ function Chat() {
                         />
                     ))
                     }
-                </>
-            )}
+                </div>
+            )
+            }
 
 
         </ChatContainer>

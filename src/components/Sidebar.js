@@ -15,10 +15,14 @@ import SidebarOption from './SidebarOption';
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import AddIcon from "@material-ui/icons/Add";
 import { db } from "../firebase";
+import { useAuthState } from "react-firebase-hooks/auth"
+import { auth } from "../firebase";
 
 
 function Sidebar() {
     const [channels, setchannels] = useState([]);
+    const [user] = useAuthState(auth);
+
     function getchannels() {
         db.collection("rooms").get()
             .then(snapshot => {
@@ -43,7 +47,7 @@ function Sidebar() {
                     <h2>PAPA FAM HQ</h2>
                     <h3>
                         <FiberManualRecordIcon />
-                        tianhao zhang
+                        {user.displayName}
                     </h3>
                 </SidebarInfo>
                 <CreateIcon />

@@ -18,8 +18,8 @@ function Header() {
             <HeaderLeft>
                 <HeaderAvatar
                     onClick={() => auth.signOut()}
-                    alt={user?.displayName}
-                    src={user?.photoURL}
+                    alt={user.displayName}
+                    src={user.photoURL}
                 />
                 <AccessTimeIcon />
             </HeaderLeft>
