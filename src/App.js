@@ -4,6 +4,7 @@ import Header from './components/Header.js'
 import styled from 'styled-components';
 import Sidebar from './components/Sidebar.js'
 import Chat from './components/Chat.js'
+import { useAuthState } from "react-firebase-hooks/auth"
 
 import {
   BrowserRouter as Router,
@@ -11,25 +12,30 @@ import {
   Route,
   Link
 } from "react-router-dom";
+import { auth } from "./firebase";
+import Login from "./components/Login"
 
 
 function App() {
-  // const REACT_VERSION = React.version;
+  const [user, loading] = useAuthState(auth);
+
   return (
     <Router>
-      <div>
-        <Header />
-
-        <AppBody>
-          <Sidebar />
-          <Switch>
-            <Route path="/" exact>
-              <Chat />
-            </Route>
-          </Switch>
-        </AppBody>
-
-      </div>
+      {!user ? (
+        <Login />
+      ) : (
+        <div>
+          <Header />
+          <AppBody>
+            <Sidebar />
+            <Switch>
+              <Route path="/" exact>
+                <Chat />
+              </Route>
+            </Switch>
+          </AppBody>
+        </div>
+      )}
     </Router>
   );
 }
