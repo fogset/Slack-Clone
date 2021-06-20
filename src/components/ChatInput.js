@@ -29,7 +29,7 @@ function ChatInput({ channelName, channelId }) {
                 channelId: channelId
             }).then(() => {
                 setInput('');
-                refreshPage();
+                //refreshPage();
             })
 
     };

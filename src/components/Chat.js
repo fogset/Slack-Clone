@@ -6,17 +6,9 @@ import { useSelector } from "react-redux";
 import { selectRoomId } from "../features/appSlice"
 import ChatInput from './ChatInput';
 import { db } from "../firebase";
+import Message from './Message';
 
-// const [roomDetails] = useDocument(
-//     roomId && db.collection('rooms').doc(roomId)
-// )
-// const [roomMessages] = useCollection(
-//     roomId &&
-//     db
-//         .collection('rooms')
-//         .doc(roomId)
-//         .collection('messages')
-// )
+
 
 function Chat() {
     const roomId = useSelector(selectRoomId);
@@ -52,9 +44,9 @@ function Chat() {
     useEffect(() => {
         getRoomInfo();
         getMessageInfo()
-        console.log('roomMessages');
-        console.log(roomMessages);
     }, []);
+    console.log('roomMessages');
+    console.log(roomMessages);
 
     return (
         <ChatContainer>
@@ -62,7 +54,7 @@ function Chat() {
                 <Header>
                     <HeaderLeft>
                         {roomDetails.filter(channel => channel.id === roomId).map(singleChannel => (
-                            <h4><strong>#{singleChannel.name}</strong></h4>
+                            <h3><strong>#{singleChannel.name}</strong></h3>
                         ))
                         }
                         <StarBorderOutlinedIcon />
@@ -75,7 +67,18 @@ function Chat() {
                     </HeaderRight>
                 </Header>
                 <ChatMessages>
-
+                    {roomMessages
+                        .filter(channel => channel.channelId
+                            .includes(roomId))
+                        .map(singleChannel => (
+                            <Message
+                                userImage={singleChannel.image}
+                                message={singleChannel.message}
+                                timestamp={singleChannel.timestamp}
+                                user={singleChannel.user}
+                            />
+                        ))
+                    }
                 </ChatMessages>
 
                 {roomDetails.filter(channel => channel.id === roomId).map(singleChannel => (
@@ -87,12 +90,6 @@ function Chat() {
                 }
 
 
-                {roomMessages
-                    .filter(channel => channel.channelId.includes(roomId))
-                    .map(singleChannel => (
-                        <h1>{singleChannel.message}</h1>
-                    ))
-                }
 
 
             </>
