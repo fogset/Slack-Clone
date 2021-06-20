@@ -52,6 +52,8 @@ function Chat() {
     useEffect(() => {
         getRoomInfo();
         getMessageInfo()
+        console.log('roomMessages');
+        console.log(roomMessages);
     }, []);
 
     return (
@@ -84,10 +86,14 @@ function Chat() {
                 ))
                 }
 
-                {roomMessages.map(singleChannel => (
-                    <h1>{singleChannel.message}</h1>
-                ))
+
+                {roomMessages
+                    .filter(channel => channel.channelId.includes(roomId))
+                    .map(singleChannel => (
+                        <h1>{singleChannel.message}</h1>
+                    ))
                 }
+
 
             </>
         </ChatContainer>
