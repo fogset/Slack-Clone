@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components';
 import StarBorderOutlinedIcon from "@material-ui/icons/StarBorderOutlined";
 import InfoOutlinedIcon from "@material-ui/icons/InfoOutlined";
@@ -11,9 +11,11 @@ import Message from './Message';
 
 
 function Chat() {
+    const chatRef = useRef(null);
     const roomId = useSelector(selectRoomId);
     const [roomDetails, setroomDetails] = useState([]);
     const [roomMessages, setroomMessages] = useState([]);
+    const [firstTimeLoading, setfirstTimeLoading] = useState(false);
 
     function getRoomInfo() {
         db.collection("rooms").get()
@@ -42,57 +44,66 @@ function Chat() {
 
 
     useEffect(() => {
-        getRoomInfo();
-        getMessageInfo()
-    }, []);
+        if (firstTimeLoading === false) {
+            getRoomInfo();
+            getMessageInfo();
+            setfirstTimeLoading(true);
+        }
+
+        chatRef?.current?.scrollIntoView({
+            behavior: "smooth",
+        });
+    }, [roomId]);
     console.log('roomMessages');
     console.log(roomMessages);
 
     return (
         <ChatContainer>
-            <>
-                <Header>
-                    <HeaderLeft>
-                        {roomDetails.filter(channel => channel.id === roomId).map(singleChannel => (
-                            <h3><strong>#{singleChannel.name}</strong></h3>
-                        ))
+            {roomDetails && roomMessages && (
+                <>
+                    <Header>
+                        <HeaderLeft>
+                            {roomDetails.filter(channel => channel.id === roomId).map(singleChannel => (
+                                <h3><strong>#{singleChannel.name}</strong></h3>
+                            ))
+                            }
+                            <StarBorderOutlinedIcon />
+                        </HeaderLeft>
+
+                        <HeaderRight>
+                            <p>
+                                <InfoOutlinedIcon /> Details
+                            </p>
+                        </HeaderRight>
+                    </Header>
+                    <ChatMessages>
+                        {roomMessages
+                            .filter(channel => channel.channelId
+                                .includes(roomId))
+                            .map(singleChannel => (
+                                <Message
+                                    userImage={singleChannel.image}
+                                    message={singleChannel.message}
+                                    timestamp={singleChannel.timestamp}
+                                    user={singleChannel.user}
+                                />
+                            ))
                         }
-                        <StarBorderOutlinedIcon />
-                    </HeaderLeft>
+                        <ChatBottom ref={chatRef} />
+                    </ChatMessages>
 
-                    <HeaderRight>
-                        <p>
-                            <InfoOutlinedIcon /> Details
-                        </p>
-                    </HeaderRight>
-                </Header>
-                <ChatMessages>
-                    {roomMessages
-                        .filter(channel => channel.channelId
-                            .includes(roomId))
-                        .map(singleChannel => (
-                            <Message
-                                userImage={singleChannel.image}
-                                message={singleChannel.message}
-                                timestamp={singleChannel.timestamp}
-                                user={singleChannel.user}
-                            />
-                        ))
+                    {roomDetails.filter(channel => channel.id === roomId).map(singleChannel => (
+                        <ChatInput
+                            chatRef={chatRef}
+                            channelName={singleChannel.name}
+                            channelId={roomId}
+                        />
+                    ))
                     }
-                </ChatMessages>
-
-                {roomDetails.filter(channel => channel.id === roomId).map(singleChannel => (
-                    <ChatInput
-                        channelName={singleChannel.name}
-                        channelId={roomId}
-                    />
-                ))
-                }
+                </>
+            )}
 
 
-
-
-            </>
         </ChatContainer>
     )
 }
@@ -140,4 +151,8 @@ const ChatContainer = styled.div`
     flex-grow:1;
     overflow-y:scroll;
     margin-top: 60px;
+`;
+
+const ChatBottom = styled.div`
+    padding-bottom: 200px;
 `;

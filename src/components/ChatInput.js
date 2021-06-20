@@ -5,7 +5,7 @@ import { Button } from '@material-ui/core';
 import { db } from "../firebase";
 import firebase from "firebase";
 
-function ChatInput({ channelName, channelId }) {
+function ChatInput({ channelName, channelId, chatRef }) {
     const [input, setInput] = useState('');
 
     function refreshPage() {
@@ -30,6 +30,9 @@ function ChatInput({ channelName, channelId }) {
             }).then(() => {
                 setInput('');
                 refreshPage();
+                chatRef?.current?.scrollIntoView({
+                    behavior: "smooth",
+                });
             })
 
     };
@@ -72,7 +75,11 @@ const ChatInputContainer = styled.div`
   }
 
   > form > button{
-    /* display: none !important; */
+    position: fixed;
+    justify-content: center;
+    font-size: 40px;
+    bottom: 10px;
+    padding:20px;
   }
 
 `;
